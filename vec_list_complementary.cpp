@@ -1,5 +1,4 @@
 //Author: Lawan Rahim
-//UNI: lr2965
 
 #include <vector>
 #include <list>
