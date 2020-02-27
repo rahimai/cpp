@@ -13,32 +13,10 @@
 
 using namespace std;
 
-template <class Container1, class Container2>
-void insert_remove_map(Container1 &randomset, Container2 &container)
-{
-    //Accepts a variable of type Container, inserts random values into the container in order and
-    //removes these values in a given order
-
-    for (int x : randomset)
-    {
-        container.insert({x, x});
-    }
-
-    while (container.size() > 0)
-    {
-        int rdm = (rand() % (container.size()));
-        auto it = container.begin();
-        for (int i = 0; i < rdm + 1; i++)
-        {
-            if (i == rdm)
-            {
-                container.erase(it);
-                break;
-            }
-            it++;
-        }
-    }
-}
+typedef struct Chunk{
+    int arr[1000];
+    int x;
+} Chunk;
 
 template <class Container1, class Container2>
 void insert_remove(Container1 &randomset, Container2 &container)
@@ -48,22 +26,24 @@ void insert_remove(Container1 &randomset, Container2 &container)
     auto it = container.begin();
 
     for (int x : randomset)
-    {
+    {   
+        Chunk rand_chunk;
+        rand_chunk.x = x;
 
         if (container.empty())
         {
-            container.insert(it, x);
+            container.insert(it, rand_chunk);
             continue;
         }
 
         for (it = container.begin(); it != container.end(); it++)
         {
-            if (x < *it)
+            if (x < (*it).x)
             {
                 break;
             }
         }
-        container.insert(it, x);
+        container.insert(it, rand_chunk);
     }
 
     while (container.size() > 0)
@@ -94,25 +74,23 @@ int main(void)
 
     //Initialize and assign values to a vector containing the different trial numbers
     //vector<int> TRIALS = {1, 5, 10, 100, 1000, 10000, 100000, 200000, 300000, 400000};
-    vector<int> TRIALS = {5, 10, 100, 1000, 10000, 100000, 200000};
+    vector<int> TRIALS = {5, 10, 100, 1000, 10000, 100000}; 
 
     //Initialize array containing subarrays of the three runs with different seeds
     vector<vector<float>> all_runtimes_v;
     vector<vector<float>> all_runtimes_l;
-    vector<vector<float>> all_runtimes_m;
 
     for (int i = 0; i < SEEDS.size(); i++)
     {
         generator.seed(SEEDS[i]);
         vector<float> runtimes_vec;
         vector<float> runtimes_lis;
-        vector<float> runtimes_map;
 
         for (int j = 0; j < TRIALS.size(); j++)
-        {
-            vector<int> vect;
-            list<int> list;
-            map<int, int> hashmap;
+        {   
+
+            vector<Chunk> vect;
+            list<Chunk> list;
             unordered_set<int> random_set;
 
             while (random_set.size() < TRIALS[j])
@@ -134,17 +112,9 @@ int main(void)
 
             auto end_l = chrono::steady_clock::now();
 
-            //Analyze runtime of map
-            auto start_m = chrono::steady_clock::now();
-
-            insert_remove_map(random_set, hashmap);
-
-            auto end_m = chrono::steady_clock::now();
-
             //Save runtimes
             runtimes_vec.push_back(chrono::duration_cast<chrono::nanoseconds>(end_v - start_v).count());
             runtimes_lis.push_back(chrono::duration_cast<chrono::nanoseconds>(end_l - start_l).count());
-            runtimes_map.push_back(chrono::duration_cast<chrono::microseconds>(end_m - start_m).count());
         }
         for (int i = 0; i < runtimes_vec.size(); i++)
         {
@@ -153,47 +123,9 @@ int main(void)
                  << " " << runtimes_vec[i] << endl;
             cout << "List times"
                  << " " << runtimes_lis[i] << endl;
-            cout << "Map times"
-                 << " " << runtimes_map[i] << endl;
         }
 
         all_runtimes_v.push_back(runtimes_vec);
         all_runtimes_l.push_back(runtimes_lis);
-        all_runtimes_m.push_back(runtimes_map);
-    }
-    fstream fout;
-    fout.open("results_vec.csv", ios::out | ios::app);
-
-    for (int i = 0; i < 3; i++)
-    {
-
-        for (int j = 0; j < TRIALS.size(); j++)
-        {
-
-            fout << all_runtimes_v[i][j] << ", ";
-        }
-        fout << "\n";
-    }
-
-    for (int i = 0; i < 3; i++)
-    {
-
-        for (int j = 0; j < TRIALS.size(); j++)
-        {
-
-            fout << all_runtimes_l[i][j] << ", ";
-        }
-        fout << "\n";
-    }
-
-    for (int i = 0; i < 3; i++)
-    {
-
-        for (int j = 0; j < TRIALS.size(); j++)
-        {
-
-            fout << all_runtimes_m[i][j] << ", ";
-        }
-        fout << "\n";
     }
 }
