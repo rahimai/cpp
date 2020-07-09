@@ -3,7 +3,10 @@
 
 using namespace std;
 
-wstring tetromino [7];
+string tetromino[7];
+int i_FieldWidth = 12;
+int i_FieldHeight = 18;
+unsigned char* p_Field = nullptr;
 
 
 //function for the rotation of the tetrominos 
@@ -22,6 +25,41 @@ int rotate(int px, int py, int r){
 int main(){
 
     //Create assets 
+    tetromino[0].append("..X.");
+    tetromino[0].append("..X.");
+    tetromino[0].append("..X.");
+    tetromino[0].append("..X.");
+
+    tetromino[1].append("..X.");
+    tetromino[1].append(".XX.");
+    tetromino[1].append(".X..");
+    tetromino[1].append("....");
+
+    tetromino[1].append("..X.");
+    tetromino[1].append("..X.");
+    tetromino[1].append("..X.");
+    tetromino[1].append("..X.");
+
+    tetromino[1].append("..X.");
+    tetromino[1].append("..X.");
+    tetromino[1].append("..X.");
+    tetromino[1].append("..X.");
+
+    tetromino[1].append("..X.");
+    tetromino[1].append("..X.");
+    tetromino[1].append("..X.");
+    tetromino[1].append("..X.");
+
+    tetromino[1].append("..X.");
+    tetromino[1].append("..X.");
+    tetromino[1].append("..X.");
+    tetromino[1].append("..X.");
+
+    tetromino[1].append("..X.");
+    tetromino[1].append("..X.");
+    tetromino[1].append("..X.");
+    tetromino[1].append("..X.");
+
 
 
 }
