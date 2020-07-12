@@ -64,5 +64,99 @@ int main(){
 	tetromino[6].append("..X...X..XX.....");
 
 
+		// Game Logic
+	bool bKey[4];
+	int nCurrentPiece = 0;
+	int nCurrentRotation = 0;
+	int nCurrentX = nFieldWidth / 2;
+	int nCurrentY = 0;
+	int nSpeed = 20;
+	int nSpeedCount = 0;
+	bool bForceDown = false;
+	bool bRotateHold = true;
+	int nPieceCount = 0;
+	int nScore = 0;
+	vector<int> vLines;
+	bool bGameOver = false;
+
+	while (!bGameOver) // Main Loop
+	{
+		// Timing =======================
+		this_thread::sleep_for(50ms); // Small Step = 1 Game Tick
+		nSpeedCount++;
+		bForceDown = (nSpeedCount == nSpeed);
+
+		// Input ========================
+		for (int k = 0; k < 4; k++)								// R   L   D Z
+			bKey[k] = (0x8000 & GetAsyncKeyState((unsigned char)("\x27\x25\x28Z"[k]))) != 0;
+		
+		// Game Logic ===================
+
+		// Handle player movement
+		nCurrentX += (bKey[0] && DoesPieceFit(nCurrentPiece, nCurrentRotation, nCurrentX + 1, nCurrentY)) ? 1 : 0;
+		nCurrentX -= (bKey[1] && DoesPieceFit(nCurrentPiece, nCurrentRotation, nCurrentX - 1, nCurrentY)) ? 1 : 0;		
+		nCurrentY += (bKey[2] && DoesPieceFit(nCurrentPiece, nCurrentRotation, nCurrentX, nCurrentY + 1)) ? 1 : 0;
+
+		// Rotate, but latch to stop wild spinning
+		if (bKey[3])
+		{
+			nCurrentRotation += (bRotateHold && DoesPieceFit(nCurrentPiece, nCurrentRotation + 1, nCurrentX, nCurrentY)) ? 1 : 0;
+			bRotateHold = false;
+		}
+		else
+			bRotateHold = true;
+
+		// Force the piece down the playfield if it's time
+		if (bForceDown)
+		{
+			// Update difficulty every 50 pieces
+			nSpeedCount = 0;
+			nPieceCount++;
+			if (nPieceCount % 50 == 0)
+				if (nSpeed >= 10) nSpeed--;
+			
+			// Test if piece can be moved down
+			if (DoesPieceFit(nCurrentPiece, nCurrentRotation, nCurrentX, nCurrentY + 1))
+				nCurrentY++; // It can, so do it!
+			else
+			{
+				// It can't! Lock the piece in place
+				for (int px = 0; px < 4; px++)
+					for (int py = 0; py < 4; py++)
+						if (tetromino[nCurrentPiece][Rotate(px, py, nCurrentRotation)] != L'.')
+							pField[(nCurrentY + py) * nFieldWidth + (nCurrentX + px)] = nCurrentPiece + 1;
+
+				// Check for lines
+				for (int py = 0; py < 4; py++)
+					if(nCurrentY + py < nFieldHeight - 1)
+					{
+						bool bLine = true;
+						for (int px = 1; px < nFieldWidth - 1; px++)
+							bLine &= (pField[(nCurrentY + py) * nFieldWidth + px]) != 0;
+
+						if (bLine)
+						{
+							// Remove Line, set to =
+							for (int px = 1; px < nFieldWidth - 1; px++)
+								pField[(nCurrentY + py) * nFieldWidth + px] = 8;
+							vLines.push_back(nCurrentY + py);
+						}						
+					}
+
+				nScore += 25;
+				if(!vLines.empty())	nScore += (1 << vLines.size()) * 100;
+
+				// Pick New Piece
+				nCurrentX = nFieldWidth / 2;
+				nCurrentY = 0;
+				nCurrentRotation = 0;
+				nCurrentPiece = rand() % 7;
+
+				// If piece does not fit straight away, game over!
+				bGameOver = !DoesPieceFit(nCurrentPiece, nCurrentRotation, nCurrentX, nCurrentY);
+			}
+		}
+
+
 
 }
