@@ -191,5 +191,8 @@ int main(){
 		}
 
 
+				// Display Frame
+		WriteConsoleOutputCharacter(hConsole, screen, nScreenWidth * nScreenHeight, { 0,0 }, &dwBytesWritten);
+	}
 
 }
