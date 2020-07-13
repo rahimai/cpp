@@ -169,6 +169,27 @@ int main(){
 					screen[(nCurrentY + py + 2)*nScreenWidth + (nCurrentX + px + 2)] = nCurrentPiece + 65;
 
 
+		// Draw Score
+		swprintf_s(&screen[2 * nScreenWidth + nFieldWidth + 6], 16, L"SCORE: %8d", nScore);
+
+		// Animate Line Completion
+		if (!vLines.empty())
+		{
+			// Display Frame (cheekily to draw lines)
+			WriteConsoleOutputCharacter(hConsole, screen, nScreenWidth * nScreenHeight, { 0,0 }, &dwBytesWritten);
+			this_thread::sleep_for(400ms); // Delay a bit
+
+			for (auto &v : vLines)
+				for (int px = 1; px < nFieldWidth - 1; px++)
+				{
+					for (int py = v; py > 0; py--)
+						pField[py * nFieldWidth + px] = pField[(py - 1) * nFieldWidth + px];
+					pField[px] = 0;
+				}
+
+			vLines.clear();
+		}
+
 
 
 }
