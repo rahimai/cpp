@@ -11,6 +11,18 @@ class List{
 
 };
 
+int search_key(List* node, int key_value){
+
+    int count = 0;
+    while(node != NULL){
+
+        if(node->data = key_value){
+            count++;
+        };
+        node = node->next;
+    };
+};
+
 
 int main(){
 
@@ -42,7 +54,7 @@ int main(){
     fifth->next = tail;
 
 
-    
+
 
 
 }
