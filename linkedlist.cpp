@@ -16,11 +16,12 @@ int search_key(List* node, int key_value){
     int count = 0;
     while(node != NULL){
 
-        if(node->data = key_value){
+        if(node->data == key_value){
             count++;
         };
         node = node->next;
     };
+    return count;
 };
 
 
@@ -53,8 +54,12 @@ int main(){
     fifth->data = 1;
     fifth->next = tail;
 
+    tail->data = 5;
 
 
+    int count = search_key(head, i_key);
 
+    cout << "Number of occurences: " << count << endl;
 
+    delete head, second, third, fourth, fifth, tail;
 }
