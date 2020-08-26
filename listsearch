@@ -1,0 +1,15 @@
+void push(Node** head_ref, int new_key)  
+{  
+    /* allocate node */
+    Node* new_node = new Node(); 
+  
+    /* put in the key */
+    new_node->key = new_key;  
+  
+    /* link the old list off the new node */
+    new_node->next = (*head_ref);  
+  
+    /* move the head to point to the new node */
+    (*head_ref) = new_node;  
+}  
+  
