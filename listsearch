@@ -12,4 +12,17 @@ void push(Node** head_ref, int new_key)
     /* move the head to point to the new node */
     (*head_ref) = new_node;  
 }  
+
+/* Checks whether the value x is present in linked list */
+bool search(Node* head, int x)  
+{  
+    Node* current = head; // Initialize current  
+    while (current != NULL)  
+    {  
+        if (current->key == x)  
+            return true;  
+        current = current->next;  
+    }  
+    return false;  
+}  
   
